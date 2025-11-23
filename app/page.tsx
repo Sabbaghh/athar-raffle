@@ -4,128 +4,53 @@ import { useState, useEffect } from 'react';
 import { RaffleWheel } from '@/components/raffle-wheel';
 import { WinnerDisplay } from '@/components/winner-display';
 
-// Sample names - replace with your actual list
-const initialNames = [
-  'Alex Chen',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-  'Sarah Johnson',
-  'Michael Rodriguez',
-  'Emma Wilson',
-  'David Kim',
-  'Jessica Brown',
-  'Ryan Martinez',
-  'Olivia Taylor',
-  'Daniel Lee',
-  'Sophia Anderson',
-  'James Garcia',
-  'Emily White',
-  'Christopher Davis',
-  'Isabella Moore',
-  'Matthew Jackson',
-];
+interface Visitor {
+  id: number;
+  uuid: string;
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+  badge_path: string;
+  checked_in_at: string | null;
+}
 
 export default function RafflePage() {
-  const [names, setNames] = useState<string[]>(initialNames);
+  const [names, setNames] = useState<string[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchVisitors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          'https://app.addedtownhall.ae/api/visitors',
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch visitors');
+        }
+
+        const data: Visitor[] = await response.json();
+        const visitorNames = data.map((visitor) => visitor.name);
+        setNames(visitorNames);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load visitors',
+        );
+        console.error('Error fetching visitors:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisitors();
+  }, []);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -160,12 +85,37 @@ export default function RafflePage() {
     }, 4500);
   };
 
-  // const resetRaffle = () => {
-  //   setNames(initialNames);
-  //   setWinner(null);
-  //   setShowConfetti(false);
-  //   setIsSpinning(false);
-  // };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#568bc9] to-[#1CAAD3] pointer-events-none" />
+        <div className="relative z-10 text-center">
+          <div className="text-4xl font-bold text-white mb-4">
+            Loading visitors...
+          </div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#568bc9] to-[#1CAAD3] pointer-events-none" />
+        <div className="relative z-10 text-center bg-white/95 backdrop-blur-sm p-8 rounded-lg shadow-2xl">
+          <div className="text-4xl font-bold text-destructive mb-4">Error</div>
+          <p className="text-xl text-foreground">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
@@ -182,14 +132,12 @@ export default function RafflePage() {
 
         {names.length === 0 && !winner && (
           <div className="text-center py-20">
-            <h2 className="text-4xl font-bold text-foreground">
-              All participants have been selected.
+            <h2 className="text-4xl font-bold text-white">
+              All participants have been selected!
             </h2>
           </div>
         )}
       </div>
-
-      {/* Reset button */}
     </div>
   );
 }
