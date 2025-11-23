@@ -67,22 +67,19 @@ export default function RafflePage() {
     setWinner(null);
     setShowConfetti(false);
     setIsSpinning(true);
+  };
+
+  const handleWinnerSelected = (selectedWinner: string) => {
+    setWinner(selectedWinner);
+    setIsSpinning(false);
+    setShowConfetti(true);
 
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * names.length);
-      const selectedWinner = names[randomIndex];
-
-      setWinner(selectedWinner);
-      setIsSpinning(false);
-      setShowConfetti(true);
-
-      setTimeout(() => {
-        setWinner(null);
-        setShowConfetti(false);
-        // Remove winner from list
-        setNames((prev) => prev.filter((_, idx) => idx !== randomIndex));
-      }, 5000);
-    }, 4500);
+      setWinner(null);
+      setShowConfetti(false);
+      // Remove winner from list
+      setNames((prev) => prev.filter((name) => name !== selectedWinner));
+    }, 5000);
   };
 
   if (loading) {
@@ -123,7 +120,11 @@ export default function RafflePage() {
 
       <div className="relative z-10 w-full max-w-4xl mx-auto">
         {!winner && names.length > 0 && (
-          <RaffleWheel names={names} isSpinning={isSpinning} />
+          <RaffleWheel
+            names={names}
+            isSpinning={isSpinning}
+            onWinnerSelected={handleWinnerSelected}
+          />
         )}
 
         {winner && (

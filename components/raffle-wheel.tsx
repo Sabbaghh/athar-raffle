@@ -5,14 +5,20 @@ import { useEffect, useRef, useState } from 'react';
 interface RaffleWheelProps {
   names: string[];
   isSpinning: boolean;
+  onWinnerSelected?: (winner: string) => void;
 }
 
-export function RaffleWheel({ names, isSpinning }: RaffleWheelProps) {
+export function RaffleWheel({
+  names,
+  isSpinning,
+  onWinnerSelected,
+}: RaffleWheelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [displayNames, setDisplayNames] = useState<string[]>([]);
   const animationRef = useRef<number | null>(null);
   const scrollPositionRef = useRef(0);
   const velocityRef = useRef(0);
+  const hasReportedWinnerRef = useRef(false);
 
   useEffect(() => {
     // Create extended list for seamless looping
@@ -23,6 +29,7 @@ export function RaffleWheel({ names, isSpinning }: RaffleWheelProps) {
   useEffect(() => {
     if (isSpinning) {
       velocityRef.current = 120; // High velocity for draw
+      hasReportedWinnerRef.current = false; // Reset winner reporting flag
     } else {
       velocityRef.current = 2; // Slow continuous scroll when idle
     }
@@ -32,6 +39,42 @@ export function RaffleWheel({ names, isSpinning }: RaffleWheelProps) {
 
       if (isSpinning) {
         velocityRef.current *= 0.988; // Slower deceleration for longer animation
+
+        if (
+          velocityRef.current < 0.5 &&
+          !hasReportedWinnerRef.current &&
+          onWinnerSelected
+        ) {
+          hasReportedWinnerRef.current = true;
+
+          // Calculate which name is in the center selection box
+          const itemHeight = 80;
+          const containerHeight = 800;
+          const centerOffset = containerHeight / 2; // Center of the visible area
+
+          // Account for the padding (160px) at the top of the scrolling container
+          const adjustedScrollPosition =
+            scrollPositionRef.current + centerOffset - 160;
+
+          // Calculate which item index is at the center
+          const centerItemIndex = Math.floor(
+            adjustedScrollPosition / itemHeight,
+          );
+
+          // Map back to the original names array (handle the extended list wrapping)
+          const actualIndex = centerItemIndex % names.length;
+          const winner = names[actualIndex];
+
+          console.log(
+            '[v0] Winner selected at scroll position:',
+            scrollPositionRef.current,
+          );
+          console.log('[v0] Center item index:', centerItemIndex);
+          console.log('[v0] Actual index:', actualIndex);
+          console.log('[v0] Winner:', winner);
+
+          onWinnerSelected(winner);
+        }
       }
 
       if (containerRef.current) {
@@ -56,7 +99,7 @@ export function RaffleWheel({ names, isSpinning }: RaffleWheelProps) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isSpinning, displayNames]);
+  }, [isSpinning, displayNames, names, onWinnerSelected]);
 
   return (
     <div className="relative w-full max-w-2xl mx-auto">
