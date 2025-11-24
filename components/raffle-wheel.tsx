@@ -49,10 +49,10 @@ export function RaffleWheel({
 
           // Calculate which name is in the center selection box
           const itemHeight = 80;
-          const containerHeight = 800;
+          const containerHeight = window.innerHeight;
           const centerOffset = containerHeight / 2; // Center of the visible area
 
-          // Account for the padding (160px) at the top of the scrolling container
+          // Account for the padding at the top of the scrolling container
           const adjustedScrollPosition =
             scrollPositionRef.current + centerOffset - 160;
 
@@ -102,19 +102,13 @@ export function RaffleWheel({
   }, [isSpinning, displayNames, names, onWinnerSelected]);
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      <div className="relative h-[800px] overflow-hidden rounded-3xl bg-card border border-[#0F68CB]/20 shadow-2xl">
-        {/* Top fade gradient */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-card to-transparent z-10 pointer-events-none" />
-
+    <div className="relative w-full max-w-6xl mx-auto">
+      <div className="relative h-screen overflow-hidden bg-[#1CA9D3]  shadow-2xl">
         <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 z-20 pointer-events-none">
-          <div className="mx-4 py-4 border-y-2 border-[#0F68CB]/40 bg-gradient-to-r from-[#0F68CB]/10 via-[#0F68CB]/15 to-[#0F68CB]/10">
+          <div className="mx-4 py-4 border-y-2 border-white/40 bg-white/30">
             <div className="h-12" />
           </div>
         </div>
-
-        {/* Bottom fade gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-card to-transparent z-10 pointer-events-none" />
 
         {/* Scrolling names */}
         <div ref={containerRef} className="absolute inset-0 py-[160px]">
@@ -123,7 +117,7 @@ export function RaffleWheel({
               key={`${name}-${index}`}
               className="h-20 flex items-center justify-center px-8"
             >
-              <span className="text-2xl md:text-3xl font-medium text-foreground/80">
+              <span className="text-2xl md:text-3xl font-medium text-white">
                 {name}
               </span>
             </div>

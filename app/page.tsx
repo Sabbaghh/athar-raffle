@@ -84,13 +84,12 @@ export default function RafflePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#568bc9] to-[#1CAAD3] pointer-events-none" />
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
         <div className="relative z-10 text-center">
-          <div className="text-4xl font-bold text-white mb-4">
+          <div className="text-4xl font-bold text-blue-600 mb-4">
             Loading visitors...
           </div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto" />
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto" />
         </div>
       </div>
     );
@@ -98,14 +97,13 @@ export default function RafflePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#568bc9] to-[#1CAAD3] pointer-events-none" />
-        <div className="relative z-10 text-center bg-white/95 backdrop-blur-sm p-8 rounded-lg shadow-2xl">
-          <div className="text-4xl font-bold text-destructive mb-4">Error</div>
-          <p className="text-xl text-foreground">{error}</p>
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="relative z-10 text-center bg-white p-8 rounded-lg shadow-2xl border border-gray-200">
+          <div className="text-4xl font-bold text-red-600 mb-4">Error</div>
+          <p className="text-xl text-gray-900">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:opacity-90 transition"
           >
             Retry
           </button>
@@ -115,10 +113,8 @@ export default function RafflePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#568bc9] to-[#1CAAD3] pointer-events-none" />
-
-      <div className="relative z-10 w-full max-w-4xl mx-auto">
+    <div className="min-h-screen bg-white flex items-center justify-center relative overflow-hidden">
+      <div className="relative z-10 w-full max-w-4xl">
         {!winner && names.length > 0 && (
           <RaffleWheel
             names={names}
@@ -133,7 +129,7 @@ export default function RafflePage() {
 
         {names.length === 0 && !winner && (
           <div className="text-center py-20">
-            <h2 className="text-4xl font-bold text-white">
+            <h2 className="text-4xl font-bold text-blue-600">
               All participants have been selected!
             </h2>
           </div>

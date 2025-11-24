@@ -11,7 +11,7 @@ interface WinnerDisplayProps {
 export function WinnerDisplay({ winner, showConfetti }: WinnerDisplayProps) {
   useEffect(() => {
     if (showConfetti) {
-      const duration = 3000;
+      const duration = 6000;
       const end = Date.now() + duration;
 
       const colors = [
@@ -62,8 +62,8 @@ export function WinnerDisplay({ winner, showConfetti }: WinnerDisplayProps) {
 
   return (
     <div className="text-center py-12 animate-in fade-in zoom-in duration-500">
-      <div className="mb-8 p-16 rounded-3xl bg-white border-2 border-[#0F68CB]/30 shadow-2xl">
-        <h2 className="text-6xl md:text-8xl font-bold text-balance bg-gradient-to-br from-[#0F68CB] to-[#4DA3FF] bg-clip-text text-transparent">
+      <div className="mb-8 p-16 rounded-3xl bg-[#1CA9D3]  border-2 border-blue-600/30 shadow-2xl">
+        <h2 className="text-6xl md:text-8xl font-bold text-balance text-white">
           {winner}
         </h2>
       </div>

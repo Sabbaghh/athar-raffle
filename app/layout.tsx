@@ -1,16 +1,17 @@
 import type React from 'react';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Cairo } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
-const _geist = Geist({ subsets: ['latin'] });
-const _geistMono = Geist_Mono({ subsets: ['latin'] });
+const cairo = Cairo({
+  subsets: ['latin', 'arabic'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+});
 
 export const metadata: Metadata = {
-  title: 'Raffle Draw - Interactive Winner Selection',
-  description:
-    'Modern raffle draw app with smooth iOS-style animations and confetti effects',
+  title: 'v0 App',
+  description: 'Created with v0',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -38,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`${cairo.className} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
