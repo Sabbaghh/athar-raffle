@@ -17,6 +17,7 @@ interface Visitor {
 
 export default function RafflePage() {
   const [names, setNames] = useState<string[]>([]);
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -28,7 +29,7 @@ export default function RafflePage() {
       try {
         setLoading(true);
         const response = await fetch(
-          'https://app.addedtownhall.ae/api/visitors',
+          'https://app.addedtownhall.ae/api/raffle/pool',
         );
 
         if (!response.ok) {
@@ -36,6 +37,7 @@ export default function RafflePage() {
         }
 
         const data: Visitor[] = await response.json();
+        setVisitors(data);
         const visitorNames = data.map((visitor) => visitor.name);
         setNames(visitorNames);
         setError(null);
@@ -70,6 +72,19 @@ export default function RafflePage() {
   };
 
   const handleWinnerSelected = (selectedWinner: string) => {
+    const winnerData = visitors.find((v) => v.name === selectedWinner);
+    if (winnerData) {
+      fetch('https://app.addedtownhall.ae/api/raffle/winner', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uuid: winnerData.uuid }),
+      }).catch((err) => {
+        console.error('[v0] Error posting winner:', err);
+      });
+    }
+
     setWinner(selectedWinner);
     setIsSpinning(false);
     setShowConfetti(true);
@@ -77,8 +92,8 @@ export default function RafflePage() {
     setTimeout(() => {
       setWinner(null);
       setShowConfetti(false);
-      // Remove winner from list
       setNames((prev) => prev.filter((name) => name !== selectedWinner));
+      setVisitors((prev) => prev.filter((v) => v.name !== selectedWinner));
     }, 5000);
   };
 
